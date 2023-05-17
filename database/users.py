@@ -14,8 +14,6 @@ import pandas as pd
 #     db.commit()
 
 
-
-
 async def get_phone_numbers():
     cur.execute("SELECT phone FROM users")
     result = cur.fetchall()
@@ -28,10 +26,40 @@ async def get_name_by_phone(phone):
     return result
 
 
+async def get_name_by_tg_id(tg_id):
+    cur.execute("SELECT name, status FROM users WHERE tg_id=%s", (tg_id,))
+    result = cur.fetchone()
+    return result
+
+
 async def add_tg_id(tg_id, phone):
     cur.execute("UPDATE users SET tg_id = %s WHERE phone = %s", (tg_id, phone,))
     db.commit()
 
+
 async def add_teacher(tg_id, teacher):
     cur.execute("UPDATE users SET teacher = %s WHERE tg_id = %s", (teacher, tg_id,))
     db.commit()
+
+
+async def check_status(tg_id):
+    cur.execute("SELECT name FROM users WHERE tg_id = %s", (tg_id,))
+    result = cur.fetchone()
+    return result
+
+
+async def add_nomination(tg_id, new_nomination):
+    cur.execute("SELECT nomination FROM users WHERE tg_id = %s", (tg_id,))
+    status = cur.fetchone()
+    if status[0]:
+        cur.execute("UPDATE users SET nomination = %s || %s WHERE tg_id = %s", (status[0], new_nomination, tg_id,))
+        db.commit()
+    else:
+        cur.execute("UPDATE users SET nomination=%s WHERE tg_id = %s", (new_nomination, tg_id,))
+        db.commit()
+
+
+async def all_nominations_ids(nomination):
+    cur.execute("SELECT tg_id FROM users WHERE nomination LIKE %s", ('%' + nomination + '%',))
+    tg_ids = cur.fetchall()
+    return tg_ids

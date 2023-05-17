@@ -17,13 +17,6 @@ def wrong_number() -> InlineKeyboardMarkup:
     return kb
 
 
-def send_number() -> InlineKeyboardMarkup:
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton('Отправить', callback_data='send_number')]
-    ])
-    return kb
-
-
 def yesno_reg() -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton('Да,всё верно', callback_data='yes_reg')],
@@ -43,3 +36,42 @@ def teachers_list() -> InlineKeyboardMarkup:
     kb.add(none_button)
     return kb
 
+
+def approve_nomination() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Да, участвую', callback_data='nomination_yes')],
+        [InlineKeyboardButton('Нет, буду сдавать другую номинацию', callback_data='nomination_no')]
+    ])
+    return kb
+
+
+def confirm_nomination(nomination) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Подтвердить', callback_data=f"gg_{nomination}")],
+        [InlineKeyboardButton('Исправить ошибку', callback_data='cancel_nomination')]
+    ])
+    return kb
+
+
+def confirm_angle_photo() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Перейти к следующему ракурсу', callback_data=f"next_angle")],
+        [InlineKeyboardButton('Заменить фото по этому ракурсу', callback_data='resend_photo')]
+    ])
+    return kb
+
+
+def confirm_angle_video() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Перейти к следующему ракурсу', callback_data=f"next_angle")],
+        [InlineKeyboardButton('Заменить видео по этому ракурсу', callback_data='resend_video')]
+    ])
+    return kb
+
+
+def confirm_angle_finish() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Завершить сдачу работы в номинации', callback_data=f"finish_nominations")],
+        [InlineKeyboardButton('Заменить фото по этому ракурсу', callback_data='resend_photo')]
+    ])
+    return kb

@@ -1,5 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 
+kb_remove = ReplyKeyboardRemove()
+
 
 def contact() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(keyboard=[

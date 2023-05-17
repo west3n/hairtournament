@@ -5,6 +5,8 @@ from configuration import settings
 import asyncio
 import logging
 
+bot = Bot(decouple.config('BOT_TOKEN'), parse_mode="HTML")
+
 
 async def main():
     logging.basicConfig(
@@ -19,6 +21,7 @@ async def main():
 
     await settings.set_default_commands(dp)
     await dp.start_polling()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

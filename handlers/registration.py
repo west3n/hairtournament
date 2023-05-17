@@ -2,8 +2,12 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import InlineKeyboardButton
-from keyboards import inline
+from keyboards import inline, reply
 from database import users
+
+
+class Phone(StatesGroup):
+    phone = State()
 
 
 class Teachers(StatesGroup):
@@ -11,7 +15,7 @@ class Teachers(StatesGroup):
     finish = State()
 
 
-async def registration_phone(msg: types.Message):
+async def registration_phone(msg: types.Message, state: FSMContext):
     if msg.contact:
         phone_number = msg.contact.phone_number
     else:
@@ -32,7 +36,8 @@ async def registration_phone(msg: types.Message):
                 elif user_data[1] == "Champ2023|Premium":
                     await msg.answer(f"<b>{user_data[0]}</b>, вы успешно зарегистрированы! "
                                      f"\n\nВаш тариф участия: Premium"
-                                     f"\n\nВ ваш тариф входит участие в 2 номинациях.")
+                                     f"\n\nВ ваш тариф входит участие в 2 номинациях.",
+                                     reply_markup=reply.kb_remove)
                 elif user_data[1] == "Champ2023|Vip":
                     await msg.answer(f"<b>{user_data[0]}</b>, вы успешно зарегистрированы! "
                                      f"\n\nВаш тариф участия: Vip"
@@ -42,6 +47,7 @@ async def registration_phone(msg: types.Message):
                                  "\n\n<b>Номинация “Короткие волосы”</b> пройдет 4 июня в 10:00 по мск")
                 await msg.answer("Подтвердите, верно ли указаны ваши данные",
                                  reply_markup=inline.yesno_reg())
+                await state.finish()
         else:
             await msg.answer("К сожалению, мы не видим ваш номер в списке участников Чемпионата. "
                              "Попробуйте ввести верный номер в формате "
@@ -56,7 +62,8 @@ async def contact_manager(call: types.CallbackQuery):
     await call.message.edit_text("Ещё раз отправьте свой номер в формате <b>79123456789:</b>")
 
 
-async def teachers_choice(call: types.CallbackQuery):
+async def teachers_choice(call: types.CallbackQuery, state: FSMContext):
+    await state.finish()
     await call.message.edit_text("Вы успешно зарегистрированы в чат-боте Чемпионата"
                                  "\n\nВыберите, у кого из списка преподавателей вы проходили обучение "
                                  "(можно выбрать несколько вариантов)",
@@ -103,21 +110,28 @@ async def teacher_choice(call: types.CallbackQuery, state: FSMContext):
 
 
 async def teachers_done(call: types.CallbackQuery, state: FSMContext):
-    async with state.proxy() as data:
-        selected_teachers = data.get('selected_teachers', [])
-        await state.update_data(selected_teachers=selected_teachers)
-        await state.update_data({'selected_teachers': []})
-        async with state.proxy() as data:
-            data['teacher'] = selected_teachers
-            await users.add_teacher(call.from_user.id, data.get('teacher'))
+    if call.data == 'none_of_them':
+        await users.add_teacher(call.from_user.id, "")
         await call.message.edit_text(
             f"Спасибо, принято, ожидайте начала Чемпионата!")
-        await state.finish()
+    else:
+        async with state.proxy() as data:
+            selected_teachers = data.get('selected_teachers', [])
+            await state.update_data(selected_teachers=selected_teachers)
+            await state.update_data({'selected_teachers': []})
+            async with state.proxy() as data:
+                data['teacher'] = selected_teachers
+                await users.add_teacher(call.from_user.id, data.get('teacher'))
+            await call.message.edit_text(
+                f"Спасибо, принято, ожидайте начала Чемпионата!")
+            await state.finish()
 
 
 def register(dp: Dispatcher):
-    dp.register_message_handler(registration_phone, content_types=['text', 'contact'], state="*")
-    dp.register_callback_query_handler(contact_manager, text='send_my_number')
+    dp.register_message_handler(registration_phone, content_types=['text', 'contact'], state=Phone.phone)
+    dp.register_callback_query_handler(contact_manager, text='send_my_number', state=Phone.phone)
     dp.register_callback_query_handler(teachers_choice, text='yes_reg')
-    dp.register_callback_query_handler(teacher_choice, lambda c: c.data in inline.teacher_names, state=Teachers.teacher)
-    dp.register_callback_query_handler(teachers_done, lambda c: c.data in ["done"], state=Teachers.teacher)
+    dp.register_callback_query_handler(teacher_choice, lambda c: c.data in inline.teacher_names,
+                                       state=Teachers.teacher)
+    dp.register_callback_query_handler(teachers_done, lambda c: c.data in ["done", "none_of_them"],
+                                       state=Teachers.teacher)
