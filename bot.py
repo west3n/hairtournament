@@ -1,3 +1,4 @@
+import decouple
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from configuration import settings
@@ -14,7 +15,6 @@ async def main():
         format=u'[%(asctime)s] - %(message)s')
     settings.logger.info("Starting bot")
 
-    bot = Bot(settings.bot_token, parse_mode="HTML")
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     settings.register_handlers(dp)

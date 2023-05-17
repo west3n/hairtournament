@@ -12,7 +12,15 @@ import pandas as pd
 #     cur.execute("INSERT INTO users (name, phone, status) VALUES (%s, %s, %s)", (name, phone, status,))
 #     print(name, phone, status)
 #     db.commit()
-
+# def create_table():
+#     cur.execute(f"CREATE TABLE users ("
+#                 f"name TEXT PRIMARY KEY,"
+#                 f"phone TEXT,"
+#                 f"status TEXT,"
+#                 f"tg_id BIGINT NULL,"
+#                 f"teacher TEXT NULL,"
+#                 f"nomination TEXT NULL);")
+#     db.commit()
 
 async def get_phone_numbers():
     cur.execute("SELECT phone FROM users")

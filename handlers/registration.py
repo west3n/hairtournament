@@ -32,7 +32,8 @@ async def registration_phone(msg: types.Message, state: FSMContext):
                 if user_data[1] == "Champ2023|Econom":
                     await msg.answer(f"<b>{user_data[0]}</b>, вы успешно зарегистрированы! "
                                      f"\n\nВаш тариф участия: Econom"
-                                     f"\n\nВ ваш тариф входит участие в 1 номинации.")
+                                     f"\n\nВ ваш тариф входит участие в 1 номинации.",
+                                     reply_markup=reply.kb_remove)
                 elif user_data[1] == "Champ2023|Premium":
                     await msg.answer(f"<b>{user_data[0]}</b>, вы успешно зарегистрированы! "
                                      f"\n\nВаш тариф участия: Premium"
@@ -41,7 +42,8 @@ async def registration_phone(msg: types.Message, state: FSMContext):
                 elif user_data[1] == "Champ2023|Vip":
                     await msg.answer(f"<b>{user_data[0]}</b>, вы успешно зарегистрированы! "
                                      f"\n\nВаш тариф участия: Vip"
-                                     f"\n\nВ ваш тариф входит участие в 3 номинациях.")
+                                     f"\n\nВ ваш тариф входит участие в 3 номинациях.",
+                                     reply_markup=reply.kb_remove)
                 await msg.answer("<b>Номинация “Редкие волосы”</b> пройдет 29 мая в 10:00 по мск"
                                  "\n\n<b>Номинация “Ровный срез”</b> пройдет 1 июня в 10:00 по мск "
                                  "\n\n<b>Номинация “Короткие волосы”</b> пройдет 4 июня в 10:00 по мск")
