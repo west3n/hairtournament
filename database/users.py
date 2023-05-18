@@ -1,6 +1,7 @@
 from database.connection import db, cur
 import pandas as pd
 
+
 # df = pd.read_excel('C:/Users/miros/Documents/PycharmProjects/hairtournament/database/Участники Чемпионата.xls')
 #
 #
@@ -71,3 +72,28 @@ async def all_nominations_ids(nomination):
     cur.execute("SELECT tg_id FROM users WHERE nomination LIKE %s", ('%' + nomination + '%',))
     tg_ids = cur.fetchall()
     return tg_ids
+
+
+async def get_all_participants_tg_id():
+    cur.execute(
+        "SELECT tg_id FROM users WHERE status IN ('Champ2023|Econom', 'Champ2023|Premium', 'Champ2023|Vip')"
+        " AND tg_id IS NOT NULL")
+    results = cur.fetchall()
+    return results
+
+
+async def get_all_second_nominations_tg_id():
+    cur.execute("SELECT tg_id FROM users WHERE (status IN ('Champ2023|Premium', 'Champ2023|Vip') AND tg_id IS NOT NULL)"
+                " OR (status = 'Champ2023|Econom' AND nomination IS NULL AND tg_id IS NOT NULL)")
+    results = cur.fetchall()
+    return results
+
+
+async def get_all_third_nominations_tg_id():
+    cur.execute("SELECT tg_id FROM users WHERE (status = 'Champ2023|Vip' AND tg_id IS NOT NULL) "
+                "OR (status = 'Champ2023|Econom' AND nomination IS NULL AND tg_id IS NOT NULL) "
+                "OR (status = 'Champ2023|Premium' AND (SELECT COUNT(*) FROM unnest(regexp_split_to_array"
+                "(nomination, ';')) WHERE TRIM(unnest) <> '') < 2 AND tg_id IS NOT NULL)")
+
+    results = cur.fetchall()
+    return results

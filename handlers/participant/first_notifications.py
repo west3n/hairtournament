@@ -8,6 +8,7 @@ from aiogram.utils.exceptions import BotBlocked
 from database import users
 from keyboards import inline
 
+bot = Bot(decouple.config('BOT_TOKEN'), parse_mode="HTML")
 
 
 async def first_notification():
@@ -151,4 +152,4 @@ def register(dp: Dispatcher):
     dp.register_callback_query_handler(approve_participation_first_nomination,
                                        lambda c: c.data in ["Редкие волосы_yes", "Редкие волосы_no"])
     dp.register_callback_query_handler(confirm_first_nomination,
-                                       lambda c: c.data in ["cancel_nomination"] or c.data.startswith("gg"))
+                                       lambda c: c.data in ["cancel_Редкие волосы", "gg_Редкие волосы"])
