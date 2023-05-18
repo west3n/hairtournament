@@ -70,4 +70,3 @@ def add_media(name, nomination, data):
     db.commit()
 
 
-

@@ -37,10 +37,10 @@ def teachers_list() -> InlineKeyboardMarkup:
     return kb
 
 
-def approve_nomination() -> InlineKeyboardMarkup:
+def approve_nomination(nomination) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton('Да, участвую', callback_data='nomination_yes')],
-        [InlineKeyboardButton('Нет, буду сдавать другую номинацию', callback_data='nomination_no')]
+        [InlineKeyboardButton('Да, участвую', callback_data=f'{nomination}_yes')],
+        [InlineKeyboardButton('Нет, буду сдавать другую номинацию', callback_data=f'{nomination}_no')]
     ])
     return kb
 
@@ -48,7 +48,7 @@ def approve_nomination() -> InlineKeyboardMarkup:
 def confirm_nomination(nomination) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton('Подтвердить', callback_data=f"gg_{nomination}")],
-        [InlineKeyboardButton('Исправить ошибку', callback_data='cancel_nomination')]
+        [InlineKeyboardButton('Исправить ошибку', callback_data=f'cancel_{nomination}')]
     ])
     return kb
 
