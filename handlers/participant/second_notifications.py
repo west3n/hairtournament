@@ -5,20 +5,20 @@ import decouple
 from aiogram import Dispatcher, types, Bot
 from aiogram.utils.exceptions import BotBlocked
 
-from database import users
+from database import participants
 from keyboards import inline
 
 bot = Bot(decouple.config('BOT_TOKEN'), parse_mode="HTML")
 
 
 async def fifth_notification():
-    all_tg_ids = [tg_id[0] for tg_id in await users.get_all_second_nominations_tg_id()]
+    all_tg_ids = [tg_id[0] for tg_id in await participants.get_all_second_nominations_tg_id()]
     for tg_id in all_tg_ids:
         try:
             video_path = 'media/shooting_instruction.mp4'
             with open(video_path, 'rb') as video:
                 session = await bot.get_session()
-                user_name = await users.get_name_by_tg_id(tg_id)
+                user_name = await participants.get_name_by_tg_id(tg_id)
                 await bot.send_message(
                     chat_id=tg_id,
                     text=f"Приветствуем вас, {user_name[0]}! Осталось 24 часа до второго дня Чемпионата!"
@@ -39,11 +39,11 @@ async def fifth_notification():
 
 
 async def sixth_notification():
-    all_tg_ids = [tg_id[0] for tg_id in await users.get_all_second_nominations_tg_id()]
+    all_tg_ids = [tg_id[0] for tg_id in await participants.get_all_second_nominations_tg_id()]
     for tg_id in all_tg_ids:
         try:
             session = await bot.get_session()
-            user_name = await users.get_name_by_tg_id(tg_id)
+            user_name = await participants.get_name_by_tg_id(tg_id)
             await bot.send_message(
                 chat_id=tg_id,
                 text=f"<b>{user_name[0]}</b>, сегодня второй день Чемпионата - номинация <b>”Ровный срез”</b>, "
@@ -55,7 +55,7 @@ async def sixth_notification():
 
 
 async def approve_participation_second_nomination(call: types.CallbackQuery):
-    user_name = await users.get_name_by_tg_id(call.from_user.id)
+    user_name = await participants.get_name_by_tg_id(call.from_user.id)
     if call.data == "Ровный срез_yes":
         await call.message.edit_text(f"{user_name[0]}, вы участвуете в номинации <b>“Ровный срез”</b>. "
                                      f"Подтвердите свой выбор, нажав на кнопку ниже",
@@ -67,7 +67,7 @@ async def approve_participation_second_nomination(call: types.CallbackQuery):
 
 async def confirm_second_nomination(call: types.CallbackQuery):
     if call.data == "cancel_Ровный срез":
-        user_name = await users.get_name_by_tg_id(call.from_user.id)
+        user_name = await participants.get_name_by_tg_id(call.from_user.id)
         await call.message.edit_text(f"<b>{user_name[0]}</b>, сегодня второй день Чемпионата - номинация <b>”Ровный"
                                      f" срез”</b>, "
                                      f"который пройдет в 10:00 по мск! \n\nУчаствуете ли вы в номинации <b>”Ровный"
@@ -75,7 +75,7 @@ async def confirm_second_nomination(call: types.CallbackQuery):
                                      reply_markup=inline.approve_nomination("Ровный срез"))
     else:
         nomination = call.data.split("_")[1]
-        await users.add_nomination(call.from_user.id, f"[{nomination}];")
+        await participants.add_nomination(call.from_user.id, f"[{nomination}];")
         await call.message.edit_text("Участие подтверждено. Ожидайте инструкцию в 9:30 по мск")
 
 #

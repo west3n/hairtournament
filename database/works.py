@@ -48,7 +48,7 @@ async def get_work_id(name, nomination):
     return result
 
 
-async def add_media(name, nomination, data):
+async def add_media(name, nomination, data, referees_list):
     end_datetime = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
     cur.execute(
         f"UPDATE works SET "
@@ -69,7 +69,8 @@ async def add_media(name, nomination, data):
         f"video6 = %s, "
         f"video7 = %s, "
         f"video8 = %s, "
-        f"video9 = %s "
+        f"video9 = %s, "
+        f"referees_list = %s "
         f"WHERE user_id = %s AND nomination = %s",
         (
             end_datetime,
@@ -90,8 +91,10 @@ async def add_media(name, nomination, data):
             data.get('seventh_video'),
             data.get('eighth_video'),
             data.get('ninth_video'),
+            referees_list,
             name,
             nomination,
         )
     )
     db.commit()
+

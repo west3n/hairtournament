@@ -7,7 +7,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils.exceptions import BotBlocked
 
-from database import users, works
+from database import participants, works, referees
 from keyboards import inline
 
 bot = Bot(decouple.config('BOT_TOKEN'), parse_mode="HTML")
@@ -34,9 +34,9 @@ class Nomination_third(StatesGroup):
 
 
 async def start_nomination():
-    all_tg_ids = [all_ids[0] for all_ids in await users.all_nominations_ids("Короткие волосы")]
+    all_tg_ids = [all_ids[0] for all_ids in await participants.all_nominations_ids("Короткие волосы")]
     for tg_id in all_tg_ids:
-        user_data = await users.get_name_by_tg_id(tg_id)
+        user_data = await participants.get_name_by_tg_id(tg_id)
         session = await bot.get_session()
         try:
             if user_data[1] == "Champ2023|Econom":
@@ -926,8 +926,9 @@ async def finish_nomination(call: types.CallbackQuery, state: FSMContext):
         await call.message.edit_text("Поздравляем! Ваша работа в номинации “Короткие волосы” сдана! "
                                      "Судьи уже оценивают работы")
         async with state.proxy() as data:
-            user_data = await users.get_name_by_tg_id(call.from_user.id)
-            await works.add_media(user_data[0], 'Короткие волосы', data)
+            user_data = await participants.get_name_by_tg_id(call.from_user.id)
+            referees_list = await referees.select_all_referees_for_exact_participant(call.from_user.id)
+            await works.add_media(user_data[0], 'Короткие волосы', data, referees_list)
             photos = [
                 data.get('first_photo'), data.get('second_photo'), data.get('third_photo'), data.get('fourth_photo'),
                 data.get('fifth_photo'), data.get('sixth_photo'), data.get('seventh_photo'), data.get('eighth_photo')

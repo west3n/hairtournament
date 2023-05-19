@@ -1,17 +1,20 @@
 from aiogram import Dispatcher, types
 from keyboards import inline, reply
 from handlers.registration import Phone
-from database import users
-
+from database import participants, referees
+from handlers.referee import nomination_referee
 
 async def bot_start(msg: types.Message):
-    user = await users.check_status(msg.from_id)
-    if user:
-        await msg.answer(f"Доброго времени суток, {user[0]}!\nРады, что вы стали частью такого масштабного проекта, "
+    user = await participants.check_status(msg.from_id)
+    referee = await referees.check_status(msg.from_id)
+    if user or referee:
+        name = user[0] if user else referee[0]
+        await msg.answer(f"Доброго времени суток, {name}!\nРады, что вы стали частью такого масштабного проекта, "
                          f"как Онлайн Чемпионат Наращивания Волос 2023! \nДля удобства проведения судейства "
                          f"и быстрого получения результатов, мы создали этот чат-бот. Он поможет вам не упустить"
                          f" ни один из этапов участия в Чемпионате. Вы уже прошли регистрацию, "
-                         f"так что ожидайте сообщений от бота.")
+                         f"так что ожидайте сообщений от бота.", reply_markup=reply.kb_remove)
+
     else:
         await msg.answer("Доброго времени суток!\nРады, что вы стали частью такого масштабного проекта, как Онлайн "
                          "Чемпионат Наращивания Волос 2023! \nДля удобства проведения судейства и быстрого получения "

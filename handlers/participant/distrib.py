@@ -1,19 +1,18 @@
 from aiogram import Dispatcher, types
-from database import users, works
+from database import participants, works
 from handlers.participant.first_nomination import Nomination
 from handlers.participant.second_nomination import Nomination_second
 from handlers.participant.third_nomination import Nomination_third
 
 
 async def handle_participant_emoji(msg: types.Message):
-    all_tg_ids_1 = [all_ids[0] for all_ids in await users.all_nominations_ids("Редкие волосы")]
-    all_tg_ids_2 = [all_ids[0] for all_ids in await users.all_nominations_ids("Ровный срез")]
-    all_tg_ids_3 = [all_ids[0] for all_ids in await users.all_nominations_ids("Короткие волосы")]
+    all_tg_ids_1 = [all_ids[0] for all_ids in await participants.all_nominations_ids("Редкие волосы")]
+    all_tg_ids_2 = [all_ids[0] for all_ids in await participants.all_nominations_ids("Ровный срез")]
+    all_tg_ids_3 = [all_ids[0] for all_ids in await participants.all_nominations_ids("Короткие волосы")]
     photo_path = 'media/first_example.jpg'
-    user_data = await users.get_name_by_tg_id(msg.from_id)
+    user_data = await participants.get_name_by_tg_id(msg.from_id)
     with open(photo_path, 'rb') as photo:
         if msg.text == "👍" and msg.from_id in all_tg_ids_1:
-            print("👍")
             try:
                 await works.add_new_work(user_data[0], "Редкие волосы")
                 await msg.answer(
@@ -30,7 +29,6 @@ async def handle_participant_emoji(msg: types.Message):
             except:
                 await msg.answer("Вы уже загружали данные в этой номинации. Пожалуйста, ожидайте результата судейства.")
         elif msg.text == "🔥" and msg.from_id in all_tg_ids_2:
-            print("🔥")
             try:
                 await works.add_new_work(user_data[0], "Ровный срез")
                 await msg.answer(

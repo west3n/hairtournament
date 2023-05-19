@@ -12,6 +12,7 @@ from handlers.participant.second_nomination import register as reg_participant_s
 from handlers.participant.third_notifications import register as reg_participant_third_notifications
 from handlers.participant.third_nomination import register as reg_participant_third_nomination
 from handlers.participant.distrib import register as reg_participant_distib
+from handlers.referee.nomination_referee import register as reg_nomination_referee
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,8 @@ logger = logging.getLogger(__name__)
 
 async def set_default_commands(dp):
     await dp.bot.set_my_commands([
-        types.BotCommand("start", "Start bot")
+        types.BotCommand("start", "Start bot"),
+        types.BotCommand("rate", "Start rate")
     ])
 
 

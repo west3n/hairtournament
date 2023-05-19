@@ -75,3 +75,12 @@ def confirm_angle_finish() -> InlineKeyboardMarkup:
         [InlineKeyboardButton('Заменить фото по этому ракурсу', callback_data='resend_photo')]
     ])
     return kb
+
+
+def nomination_choice() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Редкие волосы', callback_data=f"hh_Редкие волосы")],
+        [InlineKeyboardButton('Ровный срез', callback_data=f'hh_Ровный срез')],
+        [InlineKeyboardButton('Короткие волосы', callback_data='hh_Короткие волосы')]
+    ])
+    return kb

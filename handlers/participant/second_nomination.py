@@ -7,7 +7,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils.exceptions import BotBlocked
 
-from database import users, works
+from database import participants, works, referees
 from keyboards import inline
 
 bot = Bot(decouple.config('BOT_TOKEN'), parse_mode="HTML")
@@ -34,9 +34,9 @@ class Nomination_second(StatesGroup):
 
 
 async def start_nomination():
-    all_tg_ids = [all_ids[0] for all_ids in await users.all_nominations_ids("Ровный срез")]
+    all_tg_ids = [all_ids[0] for all_ids in await participants.all_nominations_ids("Ровный срез")]
     for tg_id in all_tg_ids:
-        user_data = await users.get_name_by_tg_id(tg_id)
+        user_data = await participants.get_name_by_tg_id(tg_id)
         session = await bot.get_session()
         try:
             if user_data[1] == "Champ2023|Econom":
@@ -73,30 +73,6 @@ async def start_nomination():
             await session.close()
         except BotBlocked:
             print(f"Bot was blocked by user {tg_id}")
-
-
-# async def handle_participant_emoji_2(msg: types.Message):
-#     print(msg.text)
-#     all_tg_ids = [all_ids[0] for all_ids in await users.all_nominations_ids("Ровный срез")]
-#     photo_path = 'media/first_example.jpg'
-#     user_data = await users.get_name_by_tg_id(msg.from_id)
-#     with open(photo_path, 'rb') as photo:
-#         if msg.text == "🔥" and msg.from_id in all_tg_ids:
-#             try:
-#                 await works.add_new_work(user_data[0], "Ровный срез")
-#                 await msg.answer(
-#                     "Вы начали выполнять работу в номинации 'Ровный срез'\nЖелаем вам победы в Чемпионате!")
-#                 await msg.answer_photo(
-#                     photo=photo,
-#                     caption="Номинация: “Ровный срез”\n\nЗагрузите фото №1. Для этого отправьте фото в этот чат"
-#                             "\n\n<b>Инструкция по съемке:</b>\nВ кадре находится модель по пояс, стоя лицом к камере."
-#                             "Волосы модели распущены и не убраны за уши, перекинуты вперед. В центре кадра плечевая"
-#                             " линия модели. Положение камеры перпендикулярно полу. Камера закреплена на штативе "
-#                             "или съемку производит третье лицо. Рекомендованное расстояние от камеры до модели - "
-#                             "до 2х метров.\n\n\nРедактировать фото запрещено❌")
-#                 await Nomination_second.first_photo.set()
-#             except:
-#                 await msg.answer("Вы уже загружали данные в этой номинации. Пожалуйста, ожидайте результата судейства.")
 
 
 async def handle_first_photo(msg: types.Message, state: FSMContext):
@@ -798,8 +774,9 @@ async def finish_nomination(call: types.CallbackQuery, state: FSMContext):
         await call.message.edit_text("Поздравляем! Ваша работа в номинации “Ровный срез” сдана! "
                                      "Судьи уже оценивают работы")
         async with state.proxy() as data:
-            user_data = await users.get_name_by_tg_id(call.from_user.id)
-            await works.add_media(user_data[0], 'Ровный срез', data)
+            user_data = await participants.get_name_by_tg_id(call.from_user.id)
+            referees_list = await referees.select_all_referees_for_exact_participant(call.from_user.id)
+            await works.add_media(user_data[0], 'Ровный срез', data, referees_list)
             photos = [
                 data.get('first_photo'), data.get('second_photo'), data.get('third_photo'), data.get('fourth_photo'),
                 data.get('fifth_photo'), data.get('sixth_photo'), data.get('seventh_photo'), data.get('eighth_photo')
@@ -836,12 +813,12 @@ async def finish_nomination(call: types.CallbackQuery, state: FSMContext):
             await Nomination_second.next()
 
 
-async def task():
-    date = datetime.datetime.now()
-    if date.hour == 17:
-        await start_nomination()
-
-asyncio.run(task())
+# async def task():
+#     date = datetime.datetime.now()
+#     if date.hour == 17:
+#         await start_nomination()
+#
+# asyncio.run(task())
 
 
 def register(dp: Dispatcher):
