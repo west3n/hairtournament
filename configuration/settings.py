@@ -34,4 +34,5 @@ def register_handlers(dp: Dispatcher):
     reg_participant_second_nomination(dp)
     reg_participant_third_notifications(dp)
     reg_participant_third_nomination(dp)
+    reg_nomination_referee(dp)
     reg_participant_distib(dp)
