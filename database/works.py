@@ -104,3 +104,8 @@ def get_works_by_referee(nomination, referee_name):
                 "nomination = %s AND %s = ANY(referees_list::text[])", (nomination, referee_name,))
     result = cur.fetchall()
     return result
+
+
+async def get_all_works_by_id(_id):
+    cur.execute("SELECT * FROM works WHERE id=%s", (_id,))
+    return cur.fetchone()

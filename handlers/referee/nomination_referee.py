@@ -9,6 +9,54 @@ from keyboards import inline
 
 class Grades(StatesGroup):
     work = State()
+    grades1 = State()
+    grades2 = State()
+    grades3 = State()
+    grades3_1 = State()
+    grades4 = State()
+    grades4_1 = State()
+    grades5 = State()
+    grades5_1 = State()
+    grades6 = State()
+    grades6_1 = State()
+    grades7 = State()
+    grades7_1 = State()
+    grades8 = State()
+    grades8_1 = State()
+    grades9 = State()
+    grades9_1 = State()
+    grades10 = State()
+    grades10_1 = State()
+    grades11 = State()
+    grades11_1 = State()
+    grades12 = State()
+    grades12_1 = State()
+    grades13 = State()
+    grades13_1 = State()
+    grades14 = State()
+    grades14_1 = State()
+    grades15 = State()
+    grades15_1 = State()
+    grades16 = State()
+    grades16_1 = State()
+    grades17 = State()
+    grades17_1 = State()
+    penalty = State()
+    penalty_ = State()
+    advice = State()
+    advice_ = State()
+    advice_2 = State()
+
+    back_state = State()
+
+
+async def get_media_list(work):
+    media = {}
+    for i in range(5, 13):
+        media[f'photo{i - 4}'] = types.InputMediaPhoto(work[i])
+    for i in range(13, 22):
+        media[f'video{i - 12}'] = types.InputMediaVideo(work[i])
+    return media
 
 
 async def select_work(msg: types.Message):
@@ -222,6 +270,34 @@ async def third_grade_handler(call: types.CallbackQuery, state: FSMContext):
 
         await Grades.next()
 
+
+async def fourth_grade(call: types.CallbackQuery, state: FSMContext):
+    if call.data == "next_grade":
+        async with state.proxy() as data:
+            work = await works.get_all_works_by_id(int(data.get("work")))
+        media = await get_media_list(work)
+        media_list = [media['video1'], media['photo1'],
+                      media['video2'], media['photo2']]
+        await call.message.edit_reply_markup()
+        await call.message.answer_media_group(media=media_list)
+        await call.message.answer(f"Номинация <b>“{work[2]}”</b>\n\nРабота № <b>{data.get('work')}</b>"
+                                  f"\n\n1. Техника капсуляции прядей - Геометрия: <b>{data.get('grades1')}</b>"
+                                  f"\n2. Техника капсуляции прядей - Пропитка: <b>{data.get('grades2')}</b>"
+                                  f"\n3. Техника капсуляции прядей - Равномерность распределения кератина:"
+                                  f"<b> {data.get('grades3')}</b>"
+                                  f"\nОцените <b>соответствие и сложность в номинации</b>",
+                                  reply_markup=inline.grades10_kb())
+        await Grades.next()
+    else:
+        await state.set_state(Grades.grades3_1.state)
+        async with state.proxy() as data:
+            work = await works.get_all_works_by_id(int(data.get("work")))
+            await call.message.edit_text(f"Номинация <b>“{work[2]}”</b>\n\nРабота № <b>{data.get('work')}</b>"
+                                         f"\n\n1. Техника капсуляции прядей - Геометрия: <b>{data.get('grades1')}</b>"
+                                         f"\n2. Техника капсуляции прядей - Пропитка: <b>{data.get('grades2')}</b>"
+                                         f"\nОцените <b>равномерность распределения кератина</b>",
+                                         reply_markup=inline.grades_kb())
+            await Grades.next()
 
 
 async def fourth_grade_handler(call: types.CallbackQuery, state: FSMContext):

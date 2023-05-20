@@ -964,7 +964,7 @@ async def finish_nomination(call: types.CallbackQuery, state: FSMContext):
 
 # async def task():
 #     date = datetime.datetime.now()
-#     if date.hour == 17:
+#     if date.hour == 13:
 #         await start_nomination()
 #
 # asyncio.run(task())

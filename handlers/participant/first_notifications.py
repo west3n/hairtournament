@@ -141,7 +141,7 @@ async def confirm_first_nomination(call: types.CallbackQuery):
 
 # async def task():
 #     date = datetime.now()
-#     if date.hour == 17:
+#     if date.hour == 13:
 #         await fourth_notification()
 #
 #
