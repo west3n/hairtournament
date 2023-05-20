@@ -1,4 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.utils.callback_data import CallbackData
+
+from database import works
 
 teacher_names = [
     'Ольга Лебединская', 'Сандра Лотос', 'Яна Чумаченко', 'Дарья Ерес', 'Яна Волкова', 'Ольга Бычкова',
@@ -82,5 +85,90 @@ def nomination_choice() -> InlineKeyboardMarkup:
         [InlineKeyboardButton('Редкие волосы', callback_data=f"hh_Редкие волосы")],
         [InlineKeyboardButton('Ровный срез', callback_data=f'hh_Ровный срез')],
         [InlineKeyboardButton('Короткие волосы', callback_data='hh_Короткие волосы')]
+    ])
+    return kb
+
+
+async def all_nomination_referee_works(nomination, referee_name, status) -> InlineKeyboardMarkup:
+    works_list = works.get_works_by_referee(nomination, referee_name)
+    buttons = []
+    for work in works_list:
+        button = InlineKeyboardButton(text=f'{work[0]}', callback_data=f'{work[0]}')
+        buttons.append(button)
+    kb = InlineKeyboardMarkup(row_width=5)
+    kb.add(*buttons)
+    if status == "Комитет по судейству":
+        back = InlineKeyboardButton(text='Назад', callback_data='back')
+        kb.add(back)
+    return kb
+
+
+def back_button() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Назад', callback_data='back')]
+    ])
+    return kb
+
+
+def back_to_work() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Вернуться к выбору номинации', callback_data="back_nominations")],
+        [InlineKeyboardButton('Вернуться к выбору работы', callback_data='back_work')]
+    ])
+    return kb
+
+
+def grades_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('0', callback_data="0"),
+         InlineKeyboardButton('1', callback_data="1"),
+         InlineKeyboardButton('2', callback_data="2"),
+         InlineKeyboardButton('3', callback_data="3"),
+         InlineKeyboardButton('4', callback_data="4"),
+         InlineKeyboardButton('5', callback_data="5")],
+        [InlineKeyboardButton('Вернуться', callback_data='back_grades')]
+    ])
+    return kb
+
+
+def grades10_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('0', callback_data="0"),
+         InlineKeyboardButton('1', callback_data="1"),
+         InlineKeyboardButton('2', callback_data="2"),
+         InlineKeyboardButton('3', callback_data="3"),
+         InlineKeyboardButton('4', callback_data="4"),
+         InlineKeyboardButton('5', callback_data="5")],
+        [InlineKeyboardButton('6', callback_data="6"),
+         InlineKeyboardButton('7', callback_data="7"),
+         InlineKeyboardButton('8', callback_data="8"),
+         InlineKeyboardButton('9', callback_data="9"),
+         InlineKeyboardButton('10', callback_data="10")
+         ],
+        [InlineKeyboardButton('Вернуться', callback_data='back_grades')]
+    ])
+    return kb
+
+
+def change_grade() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Изменить оценку', callback_data="change_grade")],
+        [InlineKeyboardButton('Перейти к следующему критерию', callback_data='next_grade')]
+    ])
+    return kb
+
+
+def change_grade_() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Изменить оценку', callback_data="change_grade")],
+        [InlineKeyboardButton('Написать советы, что необходимо улучшить мастеру', callback_data='next_grade')]
+    ])
+    return kb
+
+
+def change_grade_2() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Все верно, отправить баллы на проверку главной судье', callback_data="finish_grade")],
+        [InlineKeyboardButton('Исправить оценки', callback_data='change_grade')]
     ])
     return kb
