@@ -13,6 +13,7 @@ from handlers.participant.third_notifications import register as reg_participant
 from handlers.participant.third_nomination import register as reg_participant_third_nomination
 from handlers.participant.distrib import register as reg_participant_distib
 from handlers.referee.nomination_referee import register as reg_nomination_referee
+from handlers.referee.notifications_referee import register as reg_notification_referee
 
 
 logger = logging.getLogger(__name__)
@@ -20,8 +21,7 @@ logger = logging.getLogger(__name__)
 
 async def set_default_commands(dp):
     await dp.bot.set_my_commands([
-        types.BotCommand("start", "Start bot"),
-        types.BotCommand("rate", "Start rate")
+        types.BotCommand("start", "Start bot")
     ])
 
 
@@ -36,3 +36,4 @@ def register_handlers(dp: Dispatcher):
     reg_participant_third_nomination(dp)
     reg_nomination_referee(dp)
     reg_participant_distib(dp)
+    reg_notification_referee(dp)

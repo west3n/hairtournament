@@ -1,3 +1,4 @@
+import decouple
 from aiogram import Dispatcher, types
 from keyboards import inline, reply
 from handlers.registration import Phone

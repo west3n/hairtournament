@@ -1,3 +1,5 @@
+import asyncio
+
 from database.connection import db, cur
 import pandas as pd
 
@@ -38,8 +40,8 @@ async def add_tg_id(tg_id, phone):
     db.commit()
 
 
-async def add_teacher(tg_id, teacher):
-    cur.execute("UPDATE participants SET teacher = %s WHERE tg_id = %s", (teacher, tg_id,))
+async def add_teacher(tg_id, teacher, category):
+    cur.execute("UPDATE participants SET teacher = %s, category = %s WHERE tg_id = %s", (teacher, category, tg_id,))
     db.commit()
 
 
@@ -89,3 +91,8 @@ async def get_all_third_nominations_tg_id():
 
     results = cur.fetchall()
     return results
+
+
+async def get_category_from_name(name):
+    cur.execute("SELECT category FROM participants WHERE name = %s", (name,))
+    return cur.fetchone()

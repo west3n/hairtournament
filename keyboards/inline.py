@@ -166,9 +166,89 @@ def change_grade_() -> InlineKeyboardMarkup:
     return kb
 
 
-def change_grade_2() -> InlineKeyboardMarkup:
+def grade_confirmation() -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton('Все верно, отправить баллы на проверку главной судье', callback_data="finish_grade")],
-        [InlineKeyboardButton('Исправить оценки', callback_data='change_grade')]
+        [InlineKeyboardButton('Исправить оценки', callback_data='change_all_grades')]
+    ])
+    return kb
+
+
+def grade_confirmation_() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Все верно, сохранить оценки по этой работе', callback_data="finish_grade")],
+        [InlineKeyboardButton('Исправить оценки', callback_data='change_all_grades')]
+    ])
+    return kb
+
+
+def all_grades() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('1. Техника капсуляции прядей - Геометрия', callback_data="grade_1")],
+        [InlineKeyboardButton('2. Техника капсуляции прядей - Пропитка', callback_data="grade_2")],
+        [InlineKeyboardButton('3. Техника капсуляции прядей - Равномерность распределения кератина',
+                              callback_data="grade_3")],
+        [InlineKeyboardButton('4. Соответствие и сложность в номинации', callback_data="grade_4")],
+        [InlineKeyboardButton('5. Внешний вид работы - Форма и структура волос', callback_data="grade_5")],
+        [InlineKeyboardButton('6. Внешний вид работы - Сложность подбора цвета волос', callback_data="grade_6")],
+        [InlineKeyboardButton('7. Внешний вид работы - Точность попадания в цвет волос', callback_data="grade_7")],
+        [InlineKeyboardButton('8. Внешний вид работы - Общий вид работы', callback_data="grade_8")],
+        [InlineKeyboardButton('9. Внешний вид работы - Расстановка прядей', callback_data="grade_9")],
+        [InlineKeyboardButton('10. Техника наращивания - Герметичность капсулы', callback_data="grade_10")],
+        [InlineKeyboardButton('11. Техника наращивания - Обтекаемость капсулы', callback_data="grade_11")],
+        [InlineKeyboardButton('12. Техника наращивания - Отсутствие затёков', callback_data="grade_12")],
+        [InlineKeyboardButton('13. Техника наращивания - Безопасность', callback_data="grade_13")],
+        [InlineKeyboardButton('14. Техника наращивания - Чистота выбранных рядов и базы', callback_data="grade_14")],
+        [InlineKeyboardButton('15. Техника наращивания - Незаметность капсул в открытом ряду',
+                              callback_data="grade_15")],
+        [InlineKeyboardButton('16. Техника наращивания - Симметрия прядей', callback_data="grade_16")],
+        [InlineKeyboardButton('17. Техника наращивания - Попадание цвета кератина в тон корней',
+                              callback_data="grade_17")],
+        [InlineKeyboardButton('Штрафной балл', callback_data="penalty")]
+    ])
+    return kb
+
+
+def new_5_grades() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('0', callback_data="0"),
+         InlineKeyboardButton('1', callback_data="1"),
+         InlineKeyboardButton('2', callback_data="2"),
+         InlineKeyboardButton('3', callback_data="3"),
+         InlineKeyboardButton('4', callback_data="4"),
+         InlineKeyboardButton('5', callback_data="5")],
+    ])
+    return kb
+
+
+def new_10_grades() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('0', callback_data="0"),
+         InlineKeyboardButton('1', callback_data="1"),
+         InlineKeyboardButton('2', callback_data="2"),
+         InlineKeyboardButton('3', callback_data="3"),
+         InlineKeyboardButton('4', callback_data="4"),
+         InlineKeyboardButton('5', callback_data="5")],
+        [InlineKeyboardButton('6', callback_data="6"),
+         InlineKeyboardButton('7', callback_data="7"),
+         InlineKeyboardButton('8', callback_data="8"),
+         InlineKeyboardButton('9', callback_data="9"),
+         InlineKeyboardButton('10', callback_data="10")],
+    ])
+    return kb
+
+
+def new_grade_confirmation() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Подтверждаю', callback_data="confirm")]
+    ])
+    return kb
+
+
+def participant_categories() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton('Юниор (опыт от 1 до 2 лет)', callback_data="Юниор")],
+        [InlineKeyboardButton('Профессионал (опыт от 2 до 5 лет)', callback_data="Профессионал")],
+        [InlineKeyboardButton('Эксперт (более 5 лет опыта)', callback_data="Эксперт")]
     ])
     return kb

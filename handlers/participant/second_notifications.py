@@ -15,25 +15,24 @@ async def fifth_notification():
     all_tg_ids = [tg_id[0] for tg_id in await participants.get_all_second_nominations_tg_id()]
     for tg_id in all_tg_ids:
         try:
-            video_path = 'media/shooting_instruction.mp4'
-            with open(video_path, 'rb') as video:
-                session = await bot.get_session()
-                user_name = await participants.get_name_by_tg_id(tg_id)
-                await bot.send_message(
-                    chat_id=tg_id,
-                    text=f"Приветствуем вас, {user_name[0]}! Осталось 24 часа до второго дня Чемпионата!"
-                         "\n\nРасписание:\n<b>Номинация “Ровный срез”</b> пройдет 1 июня в 10:00 по мск"
-                         "\n<b>Номинация “Короткие волосы”</b> пройдет 4 июня в 10:00 по мск"
-                         "\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, "
-                         "с которого будете снимать работу, и одновременно зайдете в конференцию "
-                         "ZOOM со <b>второго устройства</b>"
-                         "\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
-                         "\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
-                         "\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
-                         "\n\nWindows - https://zoom.us/support/download"
-                         "\n\nMac - https://zoom.us/download?os=mac")
-                await bot.send_video(chat_id=tg_id, video=video, caption="Инструкция по общей съемке работы")
-                await session.close()
+            video = decouple.config("VIDEO_RULES")
+            session = await bot.get_session()
+            user_name = await participants.get_name_by_tg_id(tg_id)
+            await bot.send_message(
+                chat_id=tg_id,
+                text=f"Приветствуем вас, {user_name[0]}! Осталось 24 часа до второго дня Чемпионата!"
+                     "\n\nРасписание:\n<b>Номинация “Ровный срез”</b> пройдет 1 июня в 10:00 по мск"
+                     "\n<b>Номинация “Короткие волосы”</b> пройдет 4 июня в 10:00 по мск"
+                     "\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, "
+                     "с которого будете снимать работу, и одновременно зайдете в конференцию "
+                     "ZOOM со <b>второго устройства</b>"
+                     "\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
+                     "\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
+                     "\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
+                     "\n\nWindows - https://zoom.us/support/download"
+                     "\n\nMac - https://zoom.us/download?os=mac")
+            await bot.send_video(chat_id=tg_id, video=video, caption="Инструкция по общей съемке работы")
+            await session.close()
         except BotBlocked:
             print(f"Bot was blocked by user {tg_id}")
 

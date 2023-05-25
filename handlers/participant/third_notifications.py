@@ -15,26 +15,25 @@ async def fifth_notification():
     all_tg_ids = [tg_id[0] for tg_id in await participants.get_all_third_nominations_tg_id()]
     for tg_id in all_tg_ids:
         try:
-            video_path = 'media/shooting_instruction.mp4'
-            with open(video_path, 'rb') as video:
-                session = await bot.get_session()
-                user_name = await participants.get_name_by_tg_id(tg_id)
-                await bot.send_message(
-                    chat_id=tg_id,
-                    text=f"Добрый день, {user_name[0]}! Через 24 часа начнется третий"
-                         f"и последний день Чемпионата!\n\n"
-                         f"Расписание:\n"
-                         f"Номинация <b>“Короткие волосы”</b> пройдет 4 июня в 10:00 по мск"
-                         f"\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, с которого будете "
-                         f"снимать работу, и одновременно зайдете в конференцию ZOOM <b>со второго устройства</b>"
-                         f"\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
-                         f"\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
-                         f"\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
-                         f"\n\nWindows - https://zoom.us/support/download"
-                         f"\n\nMac - https://zoom.us/download?os=mac")
+            video = decouple.config("VIDEO_RULES")
+            session = await bot.get_session()
+            user_name = await participants.get_name_by_tg_id(tg_id)
+            await bot.send_message(
+                chat_id=tg_id,
+                text=f"Добрый день, {user_name[0]}! Через 24 часа начнется третий"
+                     f"и последний день Чемпионата!\n\n"
+                     f"Расписание:\n"
+                     f"Номинация <b>“Короткие волосы”</b> пройдет 4 июня в 10:00 по мск"
+                     f"\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, с которого будете "
+                     f"снимать работу, и одновременно зайдете в конференцию ZOOM <b>со второго устройства</b>"
+                     f"\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
+                     f"\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
+                     f"\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
+                     f"\n\nWindows - https://zoom.us/support/download"
+                     f"\n\nMac - https://zoom.us/download?os=mac")
 
-                await bot.send_video(chat_id=tg_id, video=video, caption="Инструкция по общей съемке работы")
-                await session.close()
+            await bot.send_video(chat_id=tg_id, video=video, caption="Инструкция по общей съемке работы")
+            await session.close()
         except BotBlocked:
             print(f"Bot was blocked by user {tg_id}")
 

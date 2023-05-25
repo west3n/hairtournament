@@ -29,9 +29,6 @@ async def may_22():
                      "\n<b>Судейство номинации “Короткие волосы”</b> пройдет 5 и 6 июня"
                      "\nВремя 10:00-13:00, 14:00-17:00, 17:00-20:00"
                      "\n\nВ дни номинаций вы можете присоединиться к участникам"
-                     "\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, "
-                     "с которого будете снимать работу, и одновременно зайдете в конференцию "
-                     "ZOOM со <b>второго устройства</b>"
                      "\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
                      "\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
                      "\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
@@ -62,9 +59,6 @@ async def may_26():
                      "\n<b>Судейство номинации “Короткие волосы”</b> пройдет 5 и 6 июня"
                      "\nВремя 10:00-13:00, 14:00-17:00, 17:00-20:00"
                      "\n\nВ дни номинаций вы можете присоединиться к участникам"
-                     "\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, "
-                     "с которого будете снимать работу, и одновременно зайдете в конференцию "
-                     "ZOOM со <b>второго устройства</b>"
                      "\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
                      "\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
                      "\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
@@ -94,9 +88,6 @@ async def may_28():
                      "\n<b>Судейство номинации “Короткие волосы”</b> пройдет 5 и 6 июня"
                      "\nВремя 10:00-13:00, 14:00-17:00, 17:00-20:00"
                      "\n\nВ дни номинаций вы можете присоединиться к участникам"
-                     "\n\nВ день Чемпионата зайдите в этот чат-бот <b>с первого устройства</b>, "
-                     "с которого будете снимать работу, и одновременно зайдете в конференцию "
-                     "ZOOM со <b>второго устройства</b>"
                      "\n\n<b>Если у вас нет приложения ZOOM, скачайте по ссылке ниже</b>"
                      "\n\nAndroid - https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
                      "\n\niOS - https://apps.apple.com/ru/app/zoom-one-platform-to-connect/id546505307"
@@ -210,3 +201,14 @@ async def june_5():
             await session.close()
         except BotBlocked:
             print(f"Bot was blocked by user {tg_id}")
+
+
+# async def task():
+#     date = datetime.now()
+#     if date.hour == 19:
+#         await may_26()
+# asyncio.run(task())
+
+
+def register(dp: Dispatcher):
+    pass

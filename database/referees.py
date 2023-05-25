@@ -61,13 +61,28 @@ async def check_status(tg_id):
 
 async def select_all_referees_for_exact_participant(tg_id):
     cur.execute("SELECT teacher FROM participants WHERE tg_id=%s", (tg_id,))
-    teachers = cur.fetchone()[0]
-    teachers_list = teachers.strip('{}').split(',')
-    teachers_list = [teacher.strip('"') for teacher in teachers_list]
-    cur.execute("SELECT panel FROM referees WHERE name IN %s", (tuple(teachers_list),))
-    panels = cur.fetchall()
-    panel_list = [panel[0] for panel in panels]
-    cur.execute("SELECT name FROM referees WHERE panel NOT IN %s OR panel IS NULL", (tuple(panel_list),))
-    names = cur.fetchall()
-    names_list = [name[0] for name in names]
-    return names_list
+    teachers = cur.fetchone()
+    if teachers[0]:
+        teachers_list = teachers[0].strip('{}').split(',')
+        teachers_list = [teacher.strip('"') for teacher in teachers_list]
+        cur.execute("SELECT panel FROM referees WHERE name IN %s", (tuple(teachers_list),))
+        panels = cur.fetchall()
+        panel_list = [panel[0] for panel in panels]
+        cur.execute("SELECT name FROM referees WHERE panel NOT IN %s OR panel IS NULL", (tuple(panel_list),))
+        names = cur.fetchall()
+        names_list = [name[0] for name in names]
+        return names_list
+    else:
+        referee_status = ['Судья', 'Главная судья']
+        cur.execute("SELECT name FROM referees WHERE status IN %s", (tuple(referee_status),))
+        names = cur.fetchall()
+        names_list = [name[0] for name in names]
+        return names_list
+
+
+async def get_panel_from_name(name):
+    cur.execute("SELECT panel FROM referees WHERE name=%s", (name,))
+    panel = cur.fetchone()[0]
+    cur.execute("SELECT name FROM referees WHERE panel=%s AND status=%s", (panel, "Судья"))
+    result = cur.fetchall()
+    return result

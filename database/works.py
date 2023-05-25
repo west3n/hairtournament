@@ -50,53 +50,18 @@ async def get_work_id(name, nomination):
 
 async def add_media(name, nomination, data, referees_list):
     end_datetime = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-    cur.execute(
-        f"UPDATE works SET "
-        f"end_datetime = %s, "
-        f"photo1 = %s, "
-        f"photo2 = %s, "
-        f"photo3 = %s, "
-        f"photo4 = %s, "
-        f"photo5 = %s, "
-        f"photo6 = %s, "
-        f"photo7 = %s, "
-        f"photo8 = %s, "
-        f"video1 = %s, "
-        f"video2 = %s, "
-        f"video3 = %s, "
-        f"video4 = %s, "
-        f"video5 = %s, "
-        f"video6 = %s, "
-        f"video7 = %s, "
-        f"video8 = %s, "
-        f"video9 = %s, "
-        f"referees_list = %s "
-        f"WHERE user_id = %s AND nomination = %s",
-        (
-            end_datetime,
-            data.get('first_photo'),
-            data.get('second_photo'),
-            data.get('third_photo'),
-            data.get('fourth_photo'),
-            data.get('fifth_photo'),
-            data.get('sixth_photo'),
-            data.get('seventh_photo'),
-            data.get('eighth_photo'),
-            data.get('first_video'),
-            data.get('second_video'),
-            data.get('third_video'),
-            data.get('fourth_video'),
-            data.get('fifth_video'),
-            data.get('sixth_video'),
-            data.get('seventh_video'),
-            data.get('eighth_video'),
-            data.get('ninth_video'),
-            referees_list,
-            name,
-            nomination,
-        )
-    )
+    cur.execute(f"UPDATE works SET end_datetime = %s, photo1 = %s, photo2 = %s, photo3 = %s, photo4 = %s, "
+                f"photo5 = %s, photo6 = %s, photo7 = %s, photo8 = %s, video1 = %s, video2 = %s, "
+                f"video3 = %s, video4 = %s, video5 = %s, video6 = %s, video7 = %s, video8 = %s, video9 = %s, "
+                f"referees_list = %s WHERE user_id = %s AND nomination = %s RETURNING id",
+                (end_datetime, data.get('first_photo'), data.get('second_photo'), data.get('third_photo'),
+                 data.get('fourth_photo'), data.get('fifth_photo'), data.get('sixth_photo'),
+                 data.get('seventh_photo'), data.get('eighth_photo'), data.get('first_video'),
+                 data.get('second_video'), data.get('third_video'), data.get('fourth_video'),
+                 data.get('fifth_video'), data.get('sixth_video'), data.get('seventh_video'),
+                 data.get('eighth_video'), data.get('ninth_video'), referees_list, name, nomination,))
     db.commit()
+    return cur.fetchone()
 
 
 def get_works_by_referee(nomination, referee_name):
@@ -106,6 +71,13 @@ def get_works_by_referee(nomination, referee_name):
     return result
 
 
+def delete_referee_from_list(work_id, referee_name):
+    cur.execute("UPDATE works SET referees_list = array_remove(referees_list, %s::text) "
+                "WHERE id = %s", (referee_name, work_id))
+    db.commit()
+
+
 async def get_all_works_by_id(_id):
     cur.execute("SELECT * FROM works WHERE id=%s", (_id,))
     return cur.fetchone()
+

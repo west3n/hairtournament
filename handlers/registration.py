@@ -11,6 +11,7 @@ class Phone(StatesGroup):
 
 
 class Teachers(StatesGroup):
+    category = State()
     teacher = State()
     finish = State()
 
@@ -57,7 +58,7 @@ async def registration_phone(msg: types.Message, state: FSMContext):
             await referees.add_tg_id(msg.from_id, phone_number)
             if phone_number in all_referee_numbers_list:
                 print(referee_data[1])
-                if referee_data[1] in ["Судья", "Главный судья"]:
+                if referee_data[1] in ["Судья", "Главная судья"]:
                     n = referee_data[2][0]
                     await msg.answer(
                         f"<b>{referee_data[0]}</b>, вы успешно авторизованы в качестве судьи Чемпионата 2023!"
@@ -91,11 +92,23 @@ async def teachers_choice(call: types.CallbackQuery, state: FSMContext):
         await call.message.edit_text("Вы успешно зарегистрированы в чат-боте Чемпионата!"
                                      "\nОжидайте новых сообщений!")
     else:
+        await call.message.edit_text(
+            "Пожалуйста, выберите категорию по опыту, в которой Вы будете соревноваться: Юниор, Профи, Эксперт.\n"
+            "При выборе категории учитывайте свой РЕАЛЬНЫЙ опыт работы. Участвовать в категории с повышением, то есть "
+            "Юниор - в Профи, Профи - в Эксперт - РАЗРЕШАЕТСЯ. За умышленное понижение категории, то есть Эксперт, "
+            "заявившийся как Профи, или Профи заявившийся, как Юниор - ДИСКВАЛИФИКАЦИЯ.",
+            reply_markup=inline.participant_categories())
+        await Teachers.category.set()
+
+
+async def teachers_choice_2(call: types.CallbackQuery, state: FSMContext):
+    async with state.proxy() as data:
+        data['category'] = call.data
         await call.message.edit_text("Вы успешно зарегистрированы в чат-боте Чемпионата"
                                      "\n\nВыберите, у кого из списка преподавателей вы проходили обучение "
                                      "(можно выбрать несколько вариантов)",
                                      reply_markup=inline.teachers_list())
-        await Teachers.teacher.set()
+        await Teachers.next()
 
 
 async def teacher_choice(call: types.CallbackQuery, state: FSMContext):
@@ -137,27 +150,29 @@ async def teacher_choice(call: types.CallbackQuery, state: FSMContext):
 
 
 async def teachers_done(call: types.CallbackQuery, state: FSMContext):
-    if call.data == 'none_of_them':
-        await participants.add_teacher(call.from_user.id, "")
-        await call.message.edit_text(
-            f"Спасибо, принято, ожидайте начала Чемпионата!")
-    else:
-        async with state.proxy() as data:
-            selected_teachers = data.get('selected_teachers', [])
-            await state.update_data(selected_teachers=selected_teachers)
-            await state.update_data({'selected_teachers': []})
-            async with state.proxy() as data:
-                data['teacher'] = selected_teachers
-                await participants.add_teacher(call.from_user.id, data.get('teacher'))
+    async with state.proxy() as data:
+        if call.data == 'none_of_them':
+            await participants.add_teacher(call.from_user.id, "", data.get('category'))
             await call.message.edit_text(
                 f"Спасибо, принято, ожидайте начала Чемпионата!")
-            await state.finish()
+        else:
+            async with state.proxy() as data:
+                selected_teachers = data.get('selected_teachers', [])
+                await state.update_data(selected_teachers=selected_teachers)
+                await state.update_data({'selected_teachers': []})
+                async with state.proxy() as data:
+                    data['teacher'] = selected_teachers
+                    await participants.add_teacher(call.from_user.id, data.get('teacher'), data.get('category'))
+                await call.message.edit_text(
+                    f"Спасибо, принято, ожидайте начала Чемпионата!")
+                await state.finish()
 
 
 def register(dp: Dispatcher):
     dp.register_message_handler(registration_phone, content_types=['text', 'contact'], state=Phone.phone)
     dp.register_callback_query_handler(contact_manager, text='send_my_number', state=Phone.phone)
     dp.register_callback_query_handler(teachers_choice, text='yes_reg')
+    dp.register_callback_query_handler(teachers_choice_2, state=Teachers.category)
     dp.register_callback_query_handler(teacher_choice, lambda c: c.data in inline.teacher_names,
                                        state=Teachers.teacher)
     dp.register_callback_query_handler(teachers_done, lambda c: c.data in ["done", "none_of_them"],
