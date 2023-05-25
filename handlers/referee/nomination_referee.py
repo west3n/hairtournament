@@ -81,10 +81,13 @@ async def select_work(msg: types.Message):
             referee_name = await referees.get_name_by_tg_id(msg.from_user.id)
             works_list = works.get_works_by_referee(nomination, referee_name[0])
             if nomination:
-                await msg.answer(f"Номинация: {nomination}\n\nВыберите номер работы:",
-                                 reply_markup=await inline.all_nomination_referee_works(nomination, status[0],
-                                                                                        status[1]))
-                await Grades.work.set()
+                if works_list:
+                    await msg.answer(f"Номинация: {nomination}\n\nВыберите номер работы:",
+                                     reply_markup=await inline.all_nomination_referee_works(nomination, status[0],
+                                                                                            status[1]))
+                    await Grades.work.set()
+                else:
+                    await msg.answer(f"Номинация <b>“{nomination}“</b>\n\nРабот для судейства нет.")
             else:
                 pass
         else:
@@ -162,14 +165,15 @@ async def first_grade_handler(call: types.CallbackQuery, state: FSMContext):
     if call.data == "back_grades":
         await state.finish()
         status = await referees.get_name_by_tg_id(call.from_user.id)
-        if datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-20", "2023-05-31"]:
+        if datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-21", "2023-05-24"]:
             nomination = "Редкие волосы"
-        elif datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-06-02", "2023-06-03"]:
+        elif datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-23", "2023-06-03"]:
             nomination = "Ровный срез"
         elif datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-06-05", "2023-06-16"]:
             nomination = "Короткие волосы"
         else:
             nomination = None
+            print(True)
             await call.message.edit_text("Сегодня нет судейств")
         if nomination:
             await call.message.edit_text(f"Номинация: “{nomination}“\n\nВыберите номер работы:",
@@ -1935,6 +1939,11 @@ async def advice_grade_handle(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['advice'] = msg.text
         work = await works.get_all_works_by_id(int(data.get("work")))
+        status = await referees.get_name_by_tg_id(msg.from_user.id)
+        markup = inline.grade_confirmation()
+        print(status[1])
+        if status[1] == "Главная судья":
+            markup = inline.grade_confirmation_()
         await msg.answer(f"Номинация <b>“{work[2]}”</b>\n\nРабота № <b>{data.get('work')}</b>"
                          f"\n\n1. Техника капсуляции прядей - Геометрия: <b>{data.get('grades1')}</b>"
                          f"\n2. Техника капсуляции прядей - Пропитка: <b>{data.get('grades2')}</b>"

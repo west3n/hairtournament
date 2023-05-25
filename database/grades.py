@@ -44,3 +44,8 @@ def add_grades(data):
                  int(data.get('grades13')), int(data.get('grades14')), int(data.get('grades15')),
                  int(data.get('grades16')), int(data.get('grades17')), int(data.get('penalty')), data.get('advice')),)
     db.commit()
+
+
+async def get_all_grades_by_id_and_referee(work, referee):
+    cur.execute("SELECT * FROM grades WHERE work_id=%s AND referee=%s", (work, referee))
+    return cur.fetchone()
