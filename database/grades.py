@@ -1,4 +1,4 @@
-from database.connection import cur, db
+from database.connection import connect
 
 
 
@@ -33,19 +33,29 @@ from database.connection import cur, db
 
 
 def add_grades(data):
-    cur.execute("INSERT INTO grades (work_id, referee, grade_1, grade_2, grade_3, grade_4, grade_5, grade_6, grade_7,"
-                "grade_8, grade_9, grade_10, grade_11, grade_12, grade_13, grade_14, grade_15, grade_16, grade_17,"
-                "penalty, advice) VALUES "
-                "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (int(data.get('work')), (data.get('referee')), int(data.get('grades1')), int(data.get('grades2')),
-                 int(data.get('grades3')), int(data.get('grades4')), int(data.get('grades5')), int(data.get('grades6')),
-                 int(data.get('grades7')), int(data.get('grades8')), int(data.get('grades9')),
-                 int(data.get('grades10')), int(data.get('grades11')), int(data.get('grades12')),
-                 int(data.get('grades13')), int(data.get('grades14')), int(data.get('grades15')),
-                 int(data.get('grades16')), int(data.get('grades17')), int(data.get('penalty')), data.get('advice')),)
-    db.commit()
+    db, cur = connect()
+    try:
+        cur.execute("INSERT INTO grades (work_id, referee, grade_1, grade_2, grade_3, grade_4, grade_5, grade_6, grade_7,"
+                    "grade_8, grade_9, grade_10, grade_11, grade_12, grade_13, grade_14, grade_15, grade_16, grade_17,"
+                    "penalty, advice) VALUES "
+                    "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (int(data.get('work')), (data.get('referee')), int(data.get('grades1')), int(data.get('grades2')),
+                     int(data.get('grades3')), int(data.get('grades4')), int(data.get('grades5')), int(data.get('grades6')),
+                     int(data.get('grades7')), int(data.get('grades8')), int(data.get('grades9')),
+                     int(data.get('grades10')), int(data.get('grades11')), int(data.get('grades12')),
+                     int(data.get('grades13')), int(data.get('grades14')), int(data.get('grades15')),
+                     int(data.get('grades16')), int(data.get('grades17')), int(data.get('penalty')), data.get('advice')),)
+        db.commit()
+    finally:
+        db.close()
+        cur.close()
 
 
 async def get_all_grades_by_id_and_referee(work, referee):
-    cur.execute("SELECT * FROM grades WHERE work_id=%s AND referee=%s", (work, referee))
-    return cur.fetchone()
+    db, cur = connect()
+    try:
+        cur.execute("SELECT * FROM grades WHERE work_id=%s AND referee=%s", (work, referee))
+        return cur.fetchone()
+    finally:
+        db.close()
+        cur.close()

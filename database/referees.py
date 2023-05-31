@@ -1,4 +1,6 @@
+import ast
 import asyncio
+import json
 
 from database.connection import connect
 import pandas as pd
@@ -138,11 +140,16 @@ async def select_all_referees_for_exact_participant(tg_id):
 
 
 async def get_panel_from_name(name):
-    cur.execute("SELECT panel FROM referees WHERE name=%s", (name,))
-    panel = cur.fetchone()[0]
-    cur.execute("SELECT name FROM referees WHERE panel=%s AND status=%s", (panel, "Судья"))
-    result = cur.fetchall()
-    return result
+    db, cur = connect()
+    try:
+        cur.execute("SELECT panel FROM referees WHERE name=%s", (name,))
+        panel = cur.fetchone()[0]
+        cur.execute("SELECT name FROM referees WHERE panel=%s AND status=%s", (panel, "Судья"))
+        result = cur.fetchall()
+        return result
+    finally:
+        db.close()
+        cur.close()
 
 
 async def get_all_head_referees():

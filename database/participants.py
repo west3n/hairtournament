@@ -1,6 +1,6 @@
 import asyncio
 
-from database.connection import db, cur
+from database.connection import connect
 import pandas as pd
 
 
@@ -23,15 +23,25 @@ import pandas as pd
 
 
 async def get_phone_numbers():
-    cur.execute("SELECT phone FROM participants")
-    result = cur.fetchall()
-    return result
+    db, cur = connect()
+    try:
+        cur.execute("SELECT phone FROM participants")
+        result = cur.fetchall()
+        return result
+    finally:
+        db.close()
+        cur.close()
 
 
 async def get_name_by_phone(phone):
-    cur.execute("SELECT name, status FROM participants WHERE phone=%s", (phone,))
-    result = cur.fetchone()
-    return result
+    db, cur = connect()
+    try:
+        cur.execute("SELECT name, status FROM participants WHERE phone=%s", (phone,))
+        result = cur.fetchone()
+        return result
+    finally:
+        db.close()
+        cur.close()
 
 
 async def get_name_by_tg_id(tg_id):
