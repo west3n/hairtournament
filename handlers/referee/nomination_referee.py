@@ -69,9 +69,9 @@ async def select_work(msg: types.Message):
     if msg.from_id in all_referee_ids:
         status = await referees.get_name_by_tg_id(msg.from_id)
         if status[1] != "Комитет по судейству":
-            if datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-22", "2023-05-22"]:
+            if datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-29", "2023-05-31"]:
                 nomination = "Редкие волосы"
-            elif datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-23", "2023-05-27"]:
+            elif datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-05-30", "2023-05-27"]:
                 nomination = "Ровный срез"
             elif datetime.datetime.now().date().strftime("%Y-%m-%d") in ["2023-06-05", "2023-06-16"]:
                 nomination = "Короткие волосы"
@@ -1941,7 +1941,6 @@ async def advice_grade_handle(msg: types.Message, state: FSMContext):
         work = await works.get_all_works_by_id(int(data.get("work")))
         status = await referees.get_name_by_tg_id(msg.from_user.id)
         markup = inline.grade_confirmation()
-        print(status[1])
         if status[1] == "Главная судья":
             markup = inline.grade_confirmation_()
         await msg.answer(f"Номинация <b>“{work[2]}”</b>\n\nРабота № <b>{data.get('work')}</b>"

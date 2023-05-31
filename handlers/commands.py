@@ -1,11 +1,26 @@
-import decouple
 from aiogram import Dispatcher, types
-from keyboards import inline, reply
-from handlers.registration import Phone
-from database import participants, referees
-from handlers.referee import nomination_referee
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import StatesGroup, State
 
-async def bot_start(msg: types.Message):
+from keyboards import reply
+from handlers.registration import Phone
+from database import participants, referees, grades, works
+
+
+class Hesoyam(StatesGroup):
+    text = State()
+
+
+async def file_id(msg: types.Message):
+    if msg.from_id == 15362825:
+        if msg.photo:
+            await msg.answer(msg.photo[-1].file_id)
+        elif msg.video:
+            await msg.answer(msg.video.file_id)
+
+
+async def bot_start(msg: types.Message, state: FSMContext):
+    await state.finish()
     user = await participants.check_status(msg.from_id)
     referee = await referees.check_status(msg.from_id)
     if user or referee:
@@ -29,4 +44,7 @@ async def bot_start(msg: types.Message):
 
 
 def register(dp: Dispatcher):
+    dp.register_message_handler(file_id, content_types=['photo', 'video'])
     dp.register_message_handler(bot_start, commands='start', state='*')
+    dp.register_message_handler(hesoyam, commands='works', state='*')
+    dp.register_message_handler(handle_hesoyam, state=Hesoyam.text)

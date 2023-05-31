@@ -95,7 +95,7 @@ async def all_nomination_referee_works(nomination, referee_name, status) -> Inli
     for work in works_list:
         button = InlineKeyboardButton(text=f'{work[0]}', callback_data=f'{work[0]}')
         buttons.append(button)
-    kb = InlineKeyboardMarkup(row_width=5)
+    kb = InlineKeyboardMarkup(row_width=7)
     kb.add(*buttons)
     if status == "Комитет по судейству":
         back = InlineKeyboardButton(text='Назад', callback_data='back')

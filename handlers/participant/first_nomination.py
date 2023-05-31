@@ -1003,8 +1003,8 @@ async def finish_nomination(call: types.CallbackQuery, state: FSMContext):
                                      "Судьи уже оценивают работы")
         async with state.proxy() as data:
             user_data = await participants.get_name_by_tg_id(call.from_user.id)
-            referees_list = await referees.select_all_referees_for_exact_participant(call.from_user.id)
-            work_id = await works.add_media(user_data[0], 'Редкие волосы', data, referees_list)
+            panel, referees_list = await referees.select_all_referees_for_exact_participant(call.from_user.id)
+            work_id = await works.add_media(user_data[0], 'Редкие волосы', data, referees_list, panel)
             photos = [
                 data.get('first_photo'), data.get('second_photo'), data.get('third_photo'), data.get('fourth_photo'),
                 data.get('fifth_photo'), data.get('sixth_photo'), data.get('seventh_photo'), data.get('eighth_photo')
