@@ -5,7 +5,7 @@ import decouple
 from aiogram import Dispatcher, types, Bot
 from aiogram.utils.exceptions import BotBlocked
 
-from database import participants
+from database import participants, works
 from keyboards import inline
 
 bot = Bot(decouple.config('BOT_TOKEN'), parse_mode="HTML")
@@ -76,6 +76,28 @@ async def confirm_second_nomination(call: types.CallbackQuery):
         nomination = call.data.split("_")[1]
         await participants.add_nomination(call.from_user.id, f"[{nomination}];")
         await call.message.edit_text("Участие подтверждено. Ожидайте инструкцию в 9:30 по мск")
+
+
+async def result_notification():
+    all_tg_ids = await works.get_all_active_participants()
+    for tg_id in all_tg_ids:
+        try:
+            tg_id = int(tg_id)
+            session = await bot.get_session()
+            user_name = await participants.get_name_by_tg_id(tg_id)
+            text = 'Поздравляем всех победителей! Ваш приз Вы можете получить на официальной Гала вечеринке ' \
+                   'Фестиваля наращивания волос в Москве в октябре 2023 года или через месяц по почте.\n\n' \
+                   'Если же Вы не заняли призовое место - не расстраивайтесь! ' \
+                   'В следующий раз Вам обязательно повезёт! А пока мы готовим для вас ещё подарок-сюрприз. ' \
+                   'Следите за анонсами в нашем Инстаграм @volosatyi_biznes\n\n' \
+                   'Ещё раз напомним, ваши личные оценки и рекомендации по вашей работе доступны ' \
+                   'Вам по команде /results в этом чат боте!'
+            await bot.send_message(chat_id=tg_id, text=text)
+            await session.close()
+            print(f'Второе сообщение отправлено участнице {user_name[0]}')
+        except BotBlocked:
+            user_name = await participants.get_name_by_tg_id(tg_id)
+            print(f"Бот заблокирован участницей> {user_name[0]}")
 
 
 # async def task():

@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 
 async def set_default_commands(dp):
     await dp.bot.set_my_commands([
-        types.BotCommand("start", "Start bot")
+        types.BotCommand("start", "Начать работу"),
+        types.BotCommand("results", "Посмотреть результаты соревнований")
     ])
 
 

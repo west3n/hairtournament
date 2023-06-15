@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 
 from database.connection import connect
@@ -83,7 +84,7 @@ def get_works_by_referee(nomination, referee_name):
     db, cur = connect()
     try:
         cur.execute("SELECT id FROM works WHERE "
-                    "nomination = %s AND %s = ANY(referees_list::text[])", (nomination, referee_name,))
+                    "nomination = %s AND %s = ANY(referees_list::text[]) ORDER BY id ASC", (nomination, referee_name,))
         result = cur.fetchall()
         return result
     finally:
@@ -110,3 +111,28 @@ async def get_all_works_by_id(_id):
     finally:
         db.close()
         cur.close()
+
+
+async def works_by_id_and_nomination(user_id, nomination):
+    db, cur = connect()
+    try:
+        cur.execute("SELECT id FROM works WHERE id=%s AND nomination = %s", (user_id, nomination))
+        return cur.fetchone()
+    finally:
+        db.close()
+        cur.close()
+
+
+async def get_all_active_participants():
+    db, cur = connect()
+    try:
+        cur.execute("SELECT DISTINCT user_id FROM works")
+        names = [name[0] for name in cur.fetchall()]
+        cur.execute("SELECT tg_id FROM participants WHERE name IN %s", (tuple(names),))
+        return [tg_id[0] for tg_id in cur.fetchall()]
+    finally:
+        db.close()
+        cur.close()
+
+
+asyncio.run(get_all_active_participants())

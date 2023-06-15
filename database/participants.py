@@ -75,7 +75,6 @@ async def add_teacher(tg_id, teacher, category):
         cur.close()
 
 
-
 async def check_status(tg_id):
     db, cur = connect()
     try:
